@@ -29,6 +29,8 @@ while True:
     con = mysql.connector.connect(user='root', database='music', password='123')
     cursor = con.cursor()
     drop = "DROP TABLE IF EXISTS schedule;"
+    # between drop and creating may be have delay and data lost but these actions it's indepent of this script
+    # it's inherent of the hardware
     create = "CREATE TABLE schedule (clipname text, clipstdate date NOT NULL, clipenddate date NOT NULL, cweight int(2) NOT NULL, SYSTIMESTAMP datetime NOT NULL, SYSHR int(2) DEFAULT NULL, SYSWKDAY int(1) DEFAULT NULL, id int(11) DEFAULT NULL,  datestamp timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP) ENGINE=InnoDB DEFAULT CHARSET=latin1;"
     select =  "SELECT clipname FROM schedule limit 10;"
     cursor.execute(drop)
@@ -42,7 +44,10 @@ while True:
         file_name = list_files[i][0]
 
         if not processed_p(file_name):
-            clip = VideoFileClip(file_name)
+            try:
+                clip = VideoFileClip(file_name)
+            except:
+                continue
             duration_time = clip.duration
             clip.close()
             command = "vlc " + file_name
