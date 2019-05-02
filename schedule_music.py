@@ -27,7 +27,12 @@ def imagefile_p(file_name):
     else:
         return False
 
-os.system("touch processed.csv")
+
+if os.path.isfile("processed.csv"):
+    os.system("rm processed.csv")
+    os.system("touch processed.csv")
+else:
+    os.system("touch processed.csv")
 
 while True:
     con = mysql.connector.connect(user='root', database='music', password='123')
