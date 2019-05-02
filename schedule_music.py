@@ -11,10 +11,12 @@ import time
 processed_clip = []
 
 def processed_p(file_path):
-    processed_temp = []
-    for i in range(len(processed_clip)):
-        processed_temp.append(processed_clip[i][0])
-    if file_path in processed_temp:
+    "this function verify if file_path exist in a file."
+    f = open("processed.csv", "r")
+    for x in f:
+        processed_clip.append(x.split(";")[0])
+        f.close
+    if file_path in processed_clip:
         return True
     else:
         return False
@@ -24,6 +26,8 @@ def imagefile_p(file_name):
         return True
     else:
         return False
+
+os.system("touch processed.csv")
 
 while True:
     con = mysql.connector.connect(user='root', database='music', password='123')
@@ -58,6 +62,10 @@ while True:
             else:
                 time.sleep(duration_time)
             os.killpg(os.getpgid(process.pid), signal.SIGTERM)
+            f = open("processed.csv", "a")
+            to_save = file_name + ";" + time.strftime("%Y-%m-%d %H:%M:%S") + "\n"
+            f.write(to_save)
+            f.close()
             processed_clip.append([file_name, time.strftime("%Y-%m-%d %H:%M:%S")])
         else:
             continue
